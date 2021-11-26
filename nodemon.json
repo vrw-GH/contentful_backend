@@ -1,0 +1,22 @@
+{
+  "restartable": "rs",
+  "ignore": [
+    ".git",
+    ".dev",
+    ".vw",
+    "node_modules/**/node_modules"
+  ],
+  "verbose": false,
+  "execMap": {
+    "js": "node --harmony"
+  },
+  "events": {
+    "restart": "kill-port 5000-5100",
+    "crash": "kill-port 5000-5100"
+  },
+  "delay": "1500",
+  "env": {
+    "NODE_ENV": "development"
+  },
+  "ext": "js,json,mjs,ejs,env"
+}

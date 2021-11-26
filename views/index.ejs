@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="UTF-8">
+   <meta http-equiv="X-UA-Compatible" content="IE=edge">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>API EndPoints for <% appName %></title>
+</head>
+<body>
+   <h1>API EndPoints for <%= appName %></h1>
+   <h3>This is the Root (API routes are as follows) </h3>
+   <ul>
+      <% endPoints.forEach((ep)=>{ %>
+         <li>
+            <a href=<%- `${host}:${port}${ep[0]}` %>>
+               <%- `Route: ${ep[1]}` %>
+            </a>
+         </li>
+      <% }); %>
+   </ul>
+</body>
+</html>
