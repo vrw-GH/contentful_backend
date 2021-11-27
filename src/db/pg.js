@@ -4,6 +4,11 @@ const connectionString = process.env.ELEPHSQL_DB_CNX2;
 const conn = new Pool({ connectionString }); // MUST be  === "connectionString" !!!!!!
 import ErrorResponse from "../utils/ErrorResponse.js";
 
+// conn
+//   .query('SELECT $1::text as name', ['brianc'])
+//   .then(res => console.log(res.rows[0].name)) // brianc
+//   .catch(err => console.error('Error executing query', err.stack))
+
 conn.connect(function (err) {
   if (err) {
     new ErrorResponse(err, 401);
@@ -36,11 +41,21 @@ export const queryDB = (sqlString, values) => {
 
 export const changeDB = (sqlString, values) => {
   return new Promise((resolve, reject) => {
-    sqlString = sqlString.replace(";", " RETURNING *;");
-    conn.query(sqlString, values, (error, results) => {
-      if (error) reject(error);
-      resolve(results.rows); //                   returns a tuple
-    });
+    conn.query(
+      sqlString.replace(";", " RETURNING *;"),
+      values,
+      (error, results) => {
+        if (error) {
+          reject(error);
+        } else if (results === undefined) {
+          reject("DB Update failed!");
+        } else if (results.rows === undefined) {
+          reject("DB Update failed!");
+        } else {
+          resolve(results.rows); //             returns  changed tuple
+        }
+      }
+    );
   });
 };
 

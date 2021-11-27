@@ -10,7 +10,32 @@ import {
 import ErrorResponse from "../utils/ErrorResponse.js";
 
 const dbTable = "recipes";
-const keyField = "title";
+const fields = [
+  "title",
+  "category",
+  "ingredients",
+  "recipe",
+  "image",
+  "username",
+];
+const keyField = fields[0];
+
+const validateElement = (element) => {
+  const tester = element;
+  try {
+    // console.log(JSON.stringify(tester)); // if not json.
+    fields.forEach((e) => {
+      if (!tester[e]) {
+        console.log(e, ":", tester[e]);
+        throw Error(`'${e}' undefined`);
+      }
+    });
+    // other validations
+    return element;
+  } catch (e) {
+    throw Error(`Data validation failed- ${e.message}.`);
+  }
+};
 
 const recipesRouter = Router();
 recipesRouter
@@ -19,35 +44,52 @@ recipesRouter
     //                                         get all tuples
     try {
       const tuples = await getAllEL(dbTable);
-      const info = { message: `All ${dbTable} list`, records: tuples.length };
+      const info = {
+        result: true,
+        message: `All ${dbTable} list.`,
+        records: tuples.length,
+      };
       res.json({ info, tuples });
     } catch (error) {
-      const info = { message: `No data found.` };
+      const info = { result: false, message: `No data found.` };
       res.json({ info });
     }
   })
   .post(async (req, res) => {
     //                                         create new tuple
-    const newElement = req.body;
     try {
-      await getOneEL(dbTable, newElement[keyField]);
+      await getOneEL(dbTable, req.body[keyField]);
       const info = {
-        message: `${newElement[keyField]} slug already exists`,
+        result: false,
+        message: `${req.body[keyField]} slug already exists.`,
       };
       res.json({ info });
     } catch (error) {
       try {
-        // some data validation here...               ?? how to catch json error
+        const newElement = validateElement(req.body); // generates error if invalid
+        // console.log("1");
         const tuple = await createEL(dbTable, newElement);
-        const info = { message: `New data for ${newElement[keyField]} added` };
+        // console.log("2");
+        const info = {
+          result: true,
+          message: `New data for ${req.body[keyField]} added.`,
+        };
         res.json({ info, tuple });
       } catch (error) {
         const info = {
-          message: `Error creating ${newElement[keyField]}. Please check data.`,
+          result: false,
+          message: `Error creating ${req.body[keyField]} / ${error.message}.`,
         };
         res.json({ info });
       }
     }
+  })
+  .delete((req, res) => {
+    const info = {
+      result: false,
+      message: `Delete all data not allowed.`,
+    };
+    res.json({ info });
   });
 
 recipesRouter
@@ -57,11 +99,15 @@ recipesRouter
     const idKey = slug(req.params.id.trim().slice(0, 40));
     try {
       const tuple = await getOneEL(dbTable, idKey);
-      const info = { message: `${dbTable} info for ${req.params.id}` };
+      const info = {
+        result: true,
+        message: `${dbTable} info for ${req.params.id}.`,
+      };
       res.json({ info, tuple });
     } catch (error) {
       const info = {
-        message: `${dbTable} ${req.params.id} (no slug found)`,
+        result: false,
+        message: `${dbTable} ${req.params.id} (no slug found).`,
       };
       res.json({ info });
     }
@@ -70,24 +116,21 @@ recipesRouter
     //                                         update single tuple
     const idKey = slug(req.params.id.trim().slice(0, 40));
     try {
-      const tuple = await getOneEL(dbTable, idKey);
-      if (tuple) {
-        const newElement = req.body;
-        // validation here...                      ?? how to catch json error
-        await updateEL(dbTable, newElement, idKey);
-        const info = {
-          message: `${dbTable} info for ${req.params.id} updated.`,
-        };
-        res.json({ info, tuple });
-      } else {
-        const info = {
-          message: `No data for ${req.params.id}`,
-        };
-        res.json({ info });
-      }
+      let tuple = await getOneEL(dbTable, idKey);
+      if (!tuple)
+        throw Error(`${dbTable} ${req.params.id} (couldnt find data).`);
+      const newElement = validateElement(req.body); // generates error if invalid
+      tuple = await updateEL(dbTable, newElement, idKey);
+      if (!tuple) throw Error(`Update failed.`);
+      const info = {
+        result: true,
+        message: `${dbTable} info for ${req.params.id} updated.`,
+      };
+      res.json({ info, tuple });
     } catch (error) {
       const info = {
-        message: `${dbTable} ${req.params.id} (slug not found)`,
+        result: false,
+        message: `${dbTable} ${req.params.id} (${error}).`,
       };
       res.json({ info });
     }
@@ -97,19 +140,17 @@ recipesRouter
     const idKey = slug(req.params.id.trim().slice(0, 40));
     try {
       const tuple = await getOneEL(dbTable, idKey);
-      if (tuple) {
-        await deleteEL(dbTable, idKey);
-        const info = { message: `${dbTable} ${req.params.id} DELETED` };
-        res.json({ info });
-      } else {
-        const info = {
-          message: `Error deleting ${dbTable} ${req.params.id}`,
-        };
-        res.json({ info });
-      }
+      if (!tuple) throw Error(`Error in delete operation.`);
+      await deleteEL(dbTable, idKey);
+      const info = {
+        result: true,
+        message: `${dbTable} ${req.params.id} DELETED.`,
+      };
+      res.json({ info });
     } catch (error) {
       const info = {
-        message: `${dbTable} ${req.params.id} (slug does not exist)`,
+        result: false,
+        message: `${dbTable} ${req.params.id} (slug does not exist/${error.message}).`,
       };
       res.json({ info });
     }

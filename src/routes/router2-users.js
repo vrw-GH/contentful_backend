@@ -3,12 +3,31 @@ import {
   getAllEL,
   getOneEL,
   createEL,
+  updateEL,
   deleteEL,
 } from "../controllers/dbData-users.js";
 import ErrorResponse from "../utils/ErrorResponse.js";
 
 const dbTable = "users";
-const keyField = "username";
+const fields = ["username", "email", "password"];
+const keyField = fields[0];
+
+const validateElement = (element) => {
+  const tester = element;
+  try {
+    // console.log(JSON.stringify(tester)); // if not json.
+    fields.forEach((e) => {
+      if (!tester[e]) {
+        console.log(e, ":", tester[e]);
+        throw Error(`${e} undefined`);
+      }
+    });
+    // other validations
+    return element;
+  } catch (e) {
+    throw Error(`Data validation failed- ${e.message}.`);
+  }
+};
 
 const usersRouter = Router();
 usersRouter
@@ -17,34 +36,50 @@ usersRouter
     //                                         get all tuples
     try {
       const tuples = await getAllEL(dbTable);
-      const info = { message: `All ${dbTable} list`, records: tuples.length };
+      const info = {
+        result: true,
+        message: `All ${dbTable} list.`,
+        records: tuples.length,
+      };
       res.json({ info, tuples });
     } catch (error) {
-      new ErrorResponse(error, 401);
+      const info = { result: false, message: `No data found.` };
+      res.json({ info });
     }
   })
   .post(async (req, res) => {
     //                                         create new tuple
-    const newElement = req.body;
     try {
-      await getOneEL(dbTable, newElement[keyField]);
+      await getOneEL(dbTable, req.body[keyField]);
       const info = {
-        message: `${keyField} ${newElement[keyField]} already exists`,
+        result: false,
+        message: `${keyField} ${req.body[keyField]} already exists.`,
       };
       res.json({ info });
     } catch (error) {
       try {
-        // some data validation here...               ?? how to catch json error
+        const newElement = validateElement(req.body); // generates error if invalid
         const tuple = await createEL(dbTable, newElement);
-        const info = { message: `New data for ${newElement[keyField]} added` };
+        const info = {
+          result: true,
+          message: `New data for ${req.body[keyField]} added.`,
+        };
         res.json({ info, tuple });
       } catch (error) {
         const info = {
-          message: `Data for ${newElement[keyField]} already exists`,
+          result: false,
+          message: `Error creating ${req.body[keyField]} / ${error.message}.`,
         };
         res.json({ info });
       }
     }
+  })
+  .delete((req, res) => {
+    const info = {
+      result: false,
+      message: `Delete all data not allowed.`,
+    };
+    res.json({ info });
   });
 
 usersRouter
@@ -53,31 +88,38 @@ usersRouter
     //                                         get single tuple
     try {
       const tuple = await getOneEL(dbTable, req.params.id);
-      const info = { message: `${dbTable} info for ${req.params.id}` };
+      const info = {
+        result: true,
+        message: `${dbTable} info for ${req.params.id}.`,
+      };
       res.json({ info, tuple });
     } catch (error) {
-      const info = { message: `${dbTable} ${req.params.id} does not exist` };
+      const info = {
+        result: false,
+        message: `${dbTable} ${req.params.id} does not exist.`,
+      };
       res.json({ info });
     }
   })
   .post(async (req, res) => {
-    //                                         update single tuple         (to do!!)
-    const newElement = req.body;
-    // validation here...                      ?? how to catch json error
+    //                                         update single tuple
     try {
-      const tuple = await getOneEL(dbTable, req.params.id);
-      if (tuple) {
-        await updateEL(dbTable, newElement, req.params.id);
-        const info = {
-          message: `${dbTable} info for ${req.params.id} updated`,
-        };
-        res.json({ info, tuple });
-      } else {
-        const info = { message: `Couldnt update ${dbTable} ${req.params.id} ` };
-        res.json({ info });
-      }
+      let tuple = await getOneEL(dbTable, req.params.id);
+      if (!tuple)
+        throw Error(`${dbTable} ${req.params.id} (couldnt find data).`);
+      const newElement = validateElement(req.body); // generates error if invalid
+      tuple = await updateEL(dbTable, newElement, req.params.id);
+      if (!tuple) throw Error(`Update failed.`);
+      const info = {
+        result: true,
+        message: `${dbTable} info for ${req.params.id} updated.`,
+      };
+      res.json({ info, tuple });
     } catch (error) {
-      const info = { message: `${dbTable} ${req.params.id} does not exist` };
+      const info = {
+        result: false,
+        message: `${dbTable} ${req.params.id} not existing (${error}).`,
+      };
       res.json({ info });
     }
   })
@@ -85,16 +127,18 @@ usersRouter
     //  Confirm...                     make sure!! - implement at front-end ?
     try {
       const tuple = await getOneEL(dbTable, req.params.id);
-      if (tuple) {
-        await deleteEL(dbTable, req.params.id);
-        const info = { message: `${dbTable} ${req.params.id} DELETED` };
-        res.json({ info });
-      } else {
-        const info = { message: `Couldnt delete ${dbTable} ${req.params.id} ` };
-        res.json({ info });
-      }
+      if (!tuple) throw Error(`Error in delete operation.`);
+      await deleteEL(dbTable, req.params.id);
+      const info = {
+        result: true,
+        message: `${dbTable} ${req.params.id} DELETED.`,
+      };
+      res.json({ info });
     } catch (error) {
-      const info = { message: `${dbTable} ${req.params.id} does not exist` };
+      const info = {
+        result: false,
+        message: `${dbTable} ${req.params.id} does not exist/${error.message}.`,
+      };
       res.json({ info });
     }
   });

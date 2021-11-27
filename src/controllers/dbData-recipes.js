@@ -15,32 +15,36 @@ export const getOneEL = (table, id) =>
   );
 
 export const createEL = (table, body) => {
-  changeDB(
-    `INSERT INTO ${table}(title, category, ingredients, recipe, image, username, slug) VALUES($1, $2, $3, $4, $5, $6, $7);`,
-    [
-      body.title,
-      body.category,
-      body.ingredients,
-      body.recipe,
-      body.image,
-      body.username,
-      slug(body.title.trim().slice(0, 40)),
-    ]
-  );
+  const fields =
+    "(title, category, ingredients, recipe, image, username, slug)";
+  const values = "($1, $2, $3, $4, $5, $6, $7)";
+  return changeDB(`INSERT INTO ${table}${fields} VALUES${values};`, [
+    body.title,
+    body.category,
+    body.ingredients,
+    body.recipe,
+    body.image,
+    body.username,
+    slug(body.title.trim().slice(0, 40)),
+  ]);
 };
 
-export const updateEL = (table, body, id) => {
-  changeDB(
-    `UPDATE ${table}(title, category, ingredients, recipe, image, username, slug) VALUES($2, $3, $4, $5, $6, $7, $8) WHERE (slug = ($1));`,
+export const updateEL = (table, element, id) => {
+  const fields =
+    "(title, category, ingredients, recipe, image, username, slug)";
+  const values = "($2, $3, $4, $5, $6, $7, $8)";
+  return changeDB(
+    `UPDATE ${table} SET ${fields} = ${values} 
+    WHERE (slug = ($1));`,
     [
       id,
-      body.title,
-      body.category,
-      body.ingredients,
-      body.recipe,
-      body.image,
-      body.username,
-      slug(body.title.trim().slice(0, 40)),
+      element.title,
+      element.category,
+      element.ingredients,
+      element.recipe,
+      element.image,
+      element.username,
+      slug(element.title.trim().slice(0, 40)),
     ]
   );
 };
