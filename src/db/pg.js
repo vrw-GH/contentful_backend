@@ -16,18 +16,19 @@ export const queryDB = (sqlString, values) => {
   return new Promise((resolve, reject) => {
     if (values) {
       // for individual inquiries
-      sqlString = sqlString.replace("?", "($1)");
+      sqlString = sqlString.replace("?", "$1");
       conn.query(sqlString, values, (error, results) => {
         if (error) reject(error);
-        if (results.rows.length < 1) {
+        if (results === undefined || results.rows.length < 1) {
           reject(Error("No Data retrieved")); //            why doesnt catch error?
+        } else {
+          resolve(results.rows); //                       returns one tuple
         }
-        resolve(results.rows); //                   returns one tuple
       });
     } else {
       conn.query(sqlString, (error, results) => {
         if (error) reject(error);
-        resolve(results.rows); //                   returns tuples (all)
+        resolve(results.rows); //                       returns tuples (all)
       });
     }
   });
@@ -35,7 +36,7 @@ export const queryDB = (sqlString, values) => {
 
 export const changeDB = (sqlString, values) => {
   return new Promise((resolve, reject) => {
-    sqlString = sqlString.replace(";", "RETURNING *;");
+    sqlString = sqlString.replace(";", " RETURNING *;");
     conn.query(sqlString, values, (error, results) => {
       if (error) reject(error);
       resolve(results.rows); //                   returns a tuple

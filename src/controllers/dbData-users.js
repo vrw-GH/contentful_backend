@@ -1,10 +1,6 @@
 // --------  SELECT A DATABASE FROM HERE ----
-// MYSQL                                         - get methods working.. post not yet
-// import { queryDB, changeDB, deleteDB } from "../db/mysql.js";
-
 // ELEPHANTSQL                                                - working!
 import { queryDB, changeDB, deleteDB } from "../db/pg.js";
-
 // HEROKU                                                  - to be developed!!
 // import conn from "../db/heroku.js";
 
