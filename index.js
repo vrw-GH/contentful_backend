@@ -5,7 +5,7 @@ import { fileURLToPath } from "url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-import "./config.js";
+// import "./config.js";
 const APPNAME = process.env.NODE_APP_PROJECT_NAME || "Contentful Backend";
 const HOST = process.env.HOST || "http://localhost";
 const PORT = process.env.PORT || 5000;

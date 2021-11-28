@@ -1,18 +1,12 @@
-import "../../config.js";
+// import "../../config.js";
 import pg from "pg";
 const { Pool } = pg;
 const connectionString = process.env.ELEPHSQL_DB_CNX2;
 const conn = new Pool({ connectionString }); // MUST be  === "connectionString" !!!!!!
 import ErrorResponse from "../utils/ErrorResponse.js";
 
-// conn
-//   .query('SELECT $1::text as name', ['brianc'])
-//   .then(res => console.log(res.rows[0].name)) // brianc
-//   .catch(err => console.error('Error executing query', err.stack))
-
 conn.connect(function (err) {
   if (err) {
-    console.log(connectionString);
     new ErrorResponse(err, 401);
   } else {
     console.log("### Connected to the PG server.");
