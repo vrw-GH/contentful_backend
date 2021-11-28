@@ -7,7 +7,7 @@ const __dirname = dirname(__filename);
 
 import "dotenv/config";
 const APPNAME = process.env.NODE_APP_PROJECT_NAME || "Contentful Backend";
-const HOST = process.env.NODE_APP_SERVER_NAME || "http://localhost";
+const HOST = process.env.HOST || "http://localhost";
 const PORT = process.env.PORT || 5000;
 
 // ------------ MY MODULES -----------
