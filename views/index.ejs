@@ -4,13 +4,15 @@
    <meta charset="UTF-8">
    <meta http-equiv="X-UA-Compatible" content="IE=edge">
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <meta name="theme-color" content="#000000" />
-    <link rel="manifest" href="manifest.json" />
+   <meta name="theme-color" content="wheat" />
+   <link rel="shortcut icon" href="%PUBLIC_URL%/favicon.ico" />
+   <link rel="manifest" href="manifest.json" />
    <title>API EndPoints for <%= APPNAME %></title>
 </head>
 <body>
    <h1>API EndPoints for <%= APPNAME %></h1>
-   <h3>This is the Root (API routes are as follows) </h3>
+   <h2>This is the Root.</h2>
+   <h3><i> - All general API routes are as follows: </i></h3>
    <ul>
       <% endPoints.forEach((ep)=>{ %>
          <li>
@@ -20,9 +22,8 @@
          </li>
       <% }); %>
    </ul>
-   <br />
    <pre>
-      <h3>STANDARD RESPONSE FORMAT : </h3>
+   <p><strong>STANDARD RESPONSE FORMAT : </strong></p>
    {
       "info": {
          "result":true,                         // or false -- for error condition
@@ -34,8 +35,8 @@
          {"field":"data","field2":"data2"}
       ]
    }
-
-</pre>
-<p>Now running at : <%= `${HOST} Port:${PORT}` %> </p>
+   </pre>
+   <p>Now running at : <%= `${HOST} Port:${PORT}` %> </p>
+   <h3>Using ElephantSQL database.</h3>
 </body>
 </html>

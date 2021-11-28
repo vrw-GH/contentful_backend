@@ -15,7 +15,7 @@ import errorHandler from "./src/middlewares/errorHandler.js";
 // import baseRouter() from "./src/routes/router0.js"; // APPNAME, server, port
 import recipesRouter from "./src/routes/router1-recipes.js";
 import usersRouter from "./src/routes/router2-users.js";
-// import categoriesRouter from "./src/routes/router3-categories.js";
+import categoriesRouter from "./src/routes/router3-categories.js";
 
 const route0 = ["/", "This info Page"];
 const route1 = ["/api/recipes", "API Recipes"];
@@ -39,7 +39,7 @@ app.get(route0[0], (req, res) =>
 );
 app.use(route1[0], recipesRouter);
 app.use(route2[0], usersRouter);
-// app.use(route3[0], categoriesRouter);
+app.use(route3[0], categoriesRouter);
 
 // ----------- lastly error handling  ----
 app.use(errorHandler);
