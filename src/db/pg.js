@@ -1,3 +1,4 @@
+import "../../config.js";
 import pg from "pg";
 const { Pool } = pg;
 const connectionString = process.env.ELEPHSQL_DB_CNX2;
@@ -11,6 +12,7 @@ import ErrorResponse from "../utils/ErrorResponse.js";
 
 conn.connect(function (err) {
   if (err) {
+    console.log(connectionString);
     new ErrorResponse(err, 401);
   } else {
     console.log("### Connected to the PG server.");
