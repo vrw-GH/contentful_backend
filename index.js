@@ -6,13 +6,13 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 import "dotenv/config";
-const appName = process.env.NODE_APP_PROJECT_NAME || "Contentful Backend";
-const host = process.env.NODE_APP_SERVER_NAME || "http://localhost";
-const port = process.env.PORT || 5000;
+const APPNAME = process.env.NODE_APP_PROJECT_NAME || "Contentful Backend";
+const HOST = process.env.NODE_APP_SERVER_NAME || "http://localhost";
+const PORT = process.env.PORT || 5000;
 
 // ------------ MY MODULES -----------
 import errorHandler from "./src/middlewares/errorHandler.js";
-// import baseRouter() from "./src/routes/router0.js"; // appname, server, port
+// import baseRouter() from "./src/routes/router0.js"; // APPNAME, server, port
 import recipesRouter from "./src/routes/router1-recipes.js";
 import usersRouter from "./src/routes/router2-users.js";
 // import categoriesRouter from "./src/routes/router2-users.js";
@@ -35,7 +35,7 @@ app.set("view engine", "ejs");
 app.use(express.static(join(__dirname, "uploads"))); //for serving something
 app.use(express.json());
 app.get(route0[0], (req, res) =>
-  res.status(501).render("index.ejs", { appName, endPoints, host, port })
+  res.status(501).render("index.ejs", { APPNAME, endPoints, HOST, PORT })
 );
 app.use(route1[0], recipesRouter);
 app.use(route2[0], usersRouter);
@@ -45,6 +45,6 @@ app.use(route2[0], usersRouter);
 app.use(errorHandler);
 
 // ----------- activate server!  ----
-app.listen(port, () =>
-  console.log(`${appName} - Server listens at ${host}:${port}`)
+app.listen(PORT, () =>
+  console.log(`${APPNAME} - Server listens at ${HOST}:${PORT}`)
 );
