@@ -18,9 +18,16 @@
     "react": "^17.0.2"
   },
   "scripts": {
+    "test": "react-scripts test --env=jsdom",
+    "start": "serve -s build",
+    "build": "react-scripts build",
+    "dev": "nodemon %npm_package_config_main%",
+    "eject": "react-scripts eject",
+    "heroku-postbuild": "npm run build"
+  },
+  "old-scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node %npm_package_config_main%",
-    "dev": "nodemon %npm_package_config_main%"
+    "start": "node %npm_package_config_main%"
   },
   "keywords": [],
   "author": "VRW",
