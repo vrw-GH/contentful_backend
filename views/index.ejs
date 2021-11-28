@@ -12,9 +12,9 @@
    <h1>API EndPoints for <%= APPNAME %></h1>
    <h3>This is the Root (API routes are as follows) </h3>
    <ul>
-      <%= endPoints.forEach((ep)=>{ %>
+      <% endPoints.forEach((ep)=>{ %>
          <li>
-            <a href=<%- `${HOST}:${PORT}${ep[0]}` %>>
+            <a href=<%= `${HOST}:${PORT}${ep[0]}` %>>
                <%- `Route: ${ep[1]}` %>
             </a>
          </li>
