@@ -18,5 +18,21 @@
          </li>
       <% }); %>
    </ul>
+   <br />
+   <pre>
+      <h3>STANDARD RESPONSE FORMAT : </h3>
+   {
+      "info": {
+         "result":true,                         // or false -- for error condition
+         "message":"All users list.",           // will contain any error info
+         "records":9                            // not for /:id responses
+      },
+      "tuples": [                               // if any tuples returned
+         {"field":"data","field2":"data2"},
+         {"field":"data","field2":"data2"}
+      ]
+   }
+
+</pre>
 </body>
 </html>
