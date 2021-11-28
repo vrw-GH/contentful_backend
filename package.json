@@ -2,9 +2,7 @@
   "name": "contentful-project-backend",
   "version": "1.0.0",
   "description": "Contentful project API",
-  "config": {
-    "main": "main.js"
-  },
+  "main": "main.js",
   "type": "module",
   "dependencies": {
     "axios": "^0.24.0",
@@ -19,12 +17,15 @@
     "slug": "^5.1.0"
   },
   "scripts": {
-    "test": "react-scripts test --env=jsdom",
+    "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node main.js",
     "build": "react-scripts build",
     "dev": "nodemon main.js",
     "eject": "react-scripts eject",
     "heroku-postbuild": "npm run build"
+  },
+  "engines": {
+    "node": "v17.0.1"
   },
   "keywords": [],
   "author": "VRW",

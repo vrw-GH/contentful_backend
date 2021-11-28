@@ -8,7 +8,7 @@ const __dirname = dirname(__filename);
 import "dotenv/config";
 const appName = process.env.NODE_APP_PROJECT_NAME || "Contentful Backend";
 const host = process.env.NODE_APP_SERVER_NAME || "http://localhost";
-const port = process.env.NODE_APP_SERVER_PORT || 5000;
+const port = process.env.PORT || 5000;
 
 // ------------ MY MODULES -----------
 import errorHandler from "./src/middlewares/errorHandler.js";
