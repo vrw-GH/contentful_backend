@@ -14,8 +14,8 @@
    <ul>
       <% endPoints.forEach((ep)=>{ %>
          <li>
-            <a href=<%= `${HOST}:${PORT}${ep[0]}` %>>
-               <%- `Route: ${ep[1]}` %>
+            <a href=<%= `${ep[0]}` %>>
+               <%- `Route: ${ep[1]}  -  ${ep[0]}` %>
             </a>
          </li>
       <% }); %>
@@ -36,6 +36,6 @@
    }
 
 </pre>
-<p>Now running at : <%= `${HOST}:${PORT}` %> </p>
+<p>Now running at : <%= `${HOST} Port:${PORT}` %> </p>
 </body>
 </html>

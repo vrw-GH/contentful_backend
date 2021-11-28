@@ -15,12 +15,12 @@ import errorHandler from "./src/middlewares/errorHandler.js";
 // import baseRouter() from "./src/routes/router0.js"; // APPNAME, server, port
 import recipesRouter from "./src/routes/router1-recipes.js";
 import usersRouter from "./src/routes/router2-users.js";
-// import categoriesRouter from "./src/routes/router2-users.js";
+// import categoriesRouter from "./src/routes/router3-categories.js";
 
-const route0 = ["/", "Root"];
+const route0 = ["/", "This info Page"];
 const route1 = ["/api/recipes", "API Recipes"];
 const route2 = ["/api/users", "API Users"];
-const route3 = ["/api/categories", "API Categories"]; // to do
+const route3 = ["/api/categories", "API Categories"]; //                  to do
 const endPoints = [route0, route1, route2, route3];
 
 // ------------ MAIN APP -----------
