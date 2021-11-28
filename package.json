@@ -11,23 +11,20 @@
     "cors": "^2.8.5",
     "ejs": "^3.1.6",
     "express": "^4.17.1",
-    "mysql": "^2.18.1",
     "multer": "^1.4.3",
+    "mysql": "^2.18.1",
     "pg": "^8.7.1",
-    "slug": "^5.1.0",
-    "react": "^17.0.2"
+    "react": "^17.0.2",
+    "react-scripts": "^4.0.3",
+    "slug": "^5.1.0"
   },
   "scripts": {
     "test": "react-scripts test --env=jsdom",
-    "start": "serve -s build",
+    "start": "node %npm_package_config_main%",
     "build": "react-scripts build",
     "dev": "nodemon %npm_package_config_main%",
     "eject": "react-scripts eject",
     "heroku-postbuild": "npm run build"
-  },
-  "old-scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node %npm_package_config_main%"
   },
   "keywords": [],
   "author": "VRW",
