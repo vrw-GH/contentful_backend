@@ -12,19 +12,15 @@
     "multer": "^1.4.3",
     "mysql": "^2.18.1",
     "pg": "^8.7.1",
-    "react": "^17.0.2",
-    "react-scripts": "^4.0.3",
     "slug": "^5.1.0"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node index.js",
-    "dev": "nodemon index.js",
-    "build": "react-scripts build",
-    "eject": "react-scripts eject"
+    "dev": "nodemon index.js"
   },
   "engines": {
-    "node": "v17.0.1"
+    "node": "v16.13.0"
   },
   "keywords": [],
   "author": "VRW",
@@ -33,5 +29,17 @@
     "dotenv": "^10.0.0",
     "kill-port": "^1.6.1",
     "nodemon": "^2.0.15"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
   }
 }
