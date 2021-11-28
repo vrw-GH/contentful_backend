@@ -2,4 +2,4 @@
 API for contentful project
 
 
-Deployed on HEROKU {https://avc-food-blog.herokuapp.com/}
+Deployed on HEROKU https://avc-food-blog.herokuapp.com/
