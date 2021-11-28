@@ -1,4 +1,4 @@
-import "../../config.js";
+import "../../config.cjs";
 import mysql from "mysql";
 import ErrorResponse from "../utils/ErrorResponse.js";
 

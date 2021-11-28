@@ -1,4 +1,4 @@
-// import "../../config.js";
+import "../../config.cjs";
 import pg from "pg";
 const { Pool } = pg;
 const connectionString = process.env.ELEPHSQL_DB_CNX2;
