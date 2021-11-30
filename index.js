@@ -17,7 +17,7 @@ import recipesRouter from "./src/routes/router1-recipes.js";
 import usersRouter from "./src/routes/router2-users.js";
 import categoriesRouter from "./src/routes/router3-categories.js";
 
-const route0 = ["/", "This info Page"];
+const route0 = ["/", "Info Page"];
 const route1 = ["/api/recipes", "API Recipes"];
 const route2 = ["/api/users", "API Users"];
 const route3 = ["/api/categories", "API Categories"]; //                  to do
@@ -40,6 +40,11 @@ app.get(route0[0], (req, res) =>
 app.use(route1[0], recipesRouter);
 app.use(route2[0], usersRouter);
 app.use(route3[0], categoriesRouter);
+app.get("*", (req, res, next) => {
+  res.status(404).send(`<h1>${APPNAME} :- </h1> 
+      <h3>Route/page not found. </h3>
+      Back: <a href="${HOST}:${PORT}${route0[0]}">${route0[1]}</a>`);
+});
 
 // ----------- lastly error handling  ----
 app.use(errorHandler);
