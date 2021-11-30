@@ -32,8 +32,8 @@ const validateElement = (element) => {
     });
     // other validations
     return element;
-  } catch (e) {
-    throw Error(`Data validation failed- ${e.message}.`);
+  } catch (err) {
+    throw Error(`Data validation failed- ${err.message}.`);
   }
 };
 

@@ -4,7 +4,8 @@ import { queryDB, changeDB, deleteDB } from "../db/pg.js";
 // HEROKU                                                  - to be developed!!
 // import conn from "../db/heroku.js";
 
-export const getAllEL = (table) => queryDB(`SELECT name FROM ${table};`);
+export const getAllEL = (table) =>
+  queryDB(`SELECT name, category_id FROM ${table};`);
 
 export const getOneEL = (table, id) =>
   queryDB(
