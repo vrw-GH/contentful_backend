@@ -5,17 +5,18 @@ import { queryDB, changeDB, deleteDB } from "../db/pg.js";
 // import conn from "../db/heroku.js";
 
 export const getAllEL = (table) =>
-  queryDB(`SELECT name, category_id FROM ${table};`);
+  queryDB(`SELECT name, category_id, description, image FROM ${table};`);
 
 export const getOneEL = (table, id) =>
   queryDB(
-    `SELECT name, category_id  FROM ${table} 
+    `SELECT name, category_id, description, image  FROM ${table} 
     WHERE LOWER(category_id) = LOWER($1);`,
     [id]
   );
 
 export const createEL = (table, element) => {
-  const fields = "(category_id, name ) VALUES($1, $2)";
+  const fields =
+    "(category_id, name, description, image ) VALUES($1, $2, $3, $4)";
   return changeDB(`INSERT INTO ${table} ${fields} ;`, [
     element.category_id,
     element.name,
@@ -23,7 +24,7 @@ export const createEL = (table, element) => {
 };
 
 export const updateEL = (table, element, id) => {
-  const fields = "(category_id, name) = ($1, $2)";
+  const fields = "(category_id, name, description, image) = ($1, $2, $3, $4)";
   return changeDB(
     `UPDATE ${table} SET ${fields}
      WHERE LOWER(category_id) = LOWER($1);`,
