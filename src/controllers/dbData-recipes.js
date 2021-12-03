@@ -9,10 +9,9 @@ export const getAllEL = (table) =>
   queryDB(`SELECT title, category, image, username, slug FROM ${table};`);
 
 export const getOneEL = (table, id) =>
-  queryDB(
-    `SELECT slug, title, category, ingredients, recipe, image, username  FROM ${table} WHERE (LOWER(slug) = LOWER(?))`,
-    [slug(id.trim()).slice(0, 40)]
-  );
+  queryDB(`SELECT * FROM ${table} WHERE (LOWER(slug) = LOWER(?))`, [
+    slug(id.trim()).slice(0, 40),
+  ]);
 
 export const createEL = (table, body) => {
   const fields =

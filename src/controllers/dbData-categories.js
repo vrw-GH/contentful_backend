@@ -9,7 +9,7 @@ export const getAllEL = (table) =>
 
 export const getOneEL = (table, id) =>
   queryDB(
-    `SELECT name, category_id, description, image  FROM ${table} 
+    `SELECT *  FROM ${table} 
     WHERE LOWER(category_id) = LOWER($1);`,
     [id]
   );

@@ -9,7 +9,7 @@ export const getAllEL = (table) =>
 
 export const getOneEL = (table, id) =>
   queryDB(
-    `SELECT username, email FROM ${table} 
+    `SELECT * FROM ${table} 
     WHERE LOWER(username) = LOWER($1);`,
     [id]
   );
