@@ -14,6 +14,8 @@ conn.connect(function (err) {
 });
 
 export const queryDB = (sqlString, values) => {
+  console.log(sqlString);
+  console.log(values);
   return new Promise((resolve, reject) => {
     if (values) {
       // for individual inquiries

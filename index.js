@@ -16,12 +16,14 @@ import errorHandler from "./src/middlewares/errorHandler.js";
 import recipesRouter from "./src/routes/router1-recipes.js";
 import usersRouter from "./src/routes/router2-users.js";
 import categoriesRouter from "./src/routes/router3-categories.js";
+import ingredientsRouter from "./src/routes/router4-ingredients.js";
 
 const route0 = ["/", "Info Page"];
 const route1 = ["/api/recipes", "API Recipes"];
 const route2 = ["/api/users", "API Users"];
-const route3 = ["/api/categories", "API Categories"]; //                  to do
-const endPoints = [route0, route1, route2, route3];
+const route3 = ["/api/categories", "API Categories"];
+const route4 = ["/api/ingredients", "API Ingredients"];
+const endPoints = [route0, route1, route2, route3, route4];
 
 // ------------ MAIN APP -----------
 const app = express();
@@ -40,6 +42,7 @@ app.get(route0[0], (req, res) =>
 app.use(route1[0], recipesRouter);
 app.use(route2[0], usersRouter);
 app.use(route3[0], categoriesRouter);
+app.use(route4[0], ingredientsRouter);
 app.get("*", (req, res, next) => {
   res.status(404).send(`<h1>${APPNAME} :- </h1> 
       <h3>Route/page not found. </h3>
