@@ -1,42 +1,37 @@
 // --------  SELECT A DATABASE FROM HERE ----
-// ELEPHANTSQL                                                - working!
-import { queryDB, changeDB, deleteDB } from "../db/pg.js";
-// HEROKU                                                  - to be developed!!
-// import conn from "../db/heroku.js";
+import { queryDB, changeDB, deleteDB } from "../db/pg.js"; // ELEPHANTSQL   - working!
+// import conn from "../db/heroku.js"; //                     HEROKU        - to be developed!!
 
-export const getAllEL = (table) =>
-  queryDB(
-    `SELECT ingredient_id, ingredient_name, ingredient_unit FROM ${table};`
-  );
+export const getAllEL = (table) => {
+  const fields = "ingredient_id, ingredient_name, ingredient_unit"; // "*"
+  return queryDB(`SELECT ${fields} FROM ${table};`);
+};
 
-export const getOneEL = (table, id) =>
-  queryDB(
-    `SELECT *  FROM ${table} 
-    WHERE ingredient_id = $1;`,
-    [id]
-  );
+export const getOneEL = (table, id) => {
+  const fields = "*";
+  const pKey = "ingredient_id";
+  return queryDB(`SELECT ${fields} FROM ${table} WHERE ${pKey} = $1;`, [id]);
+};
 
 export const createEL = (table, element) => {
   const fields = "(ingredient_name, ingredient_unit) VALUES($1, $2)";
   return changeDB(`INSERT INTO ${table} ${fields} ;`, [
-    element.name.trim(),
-    element.unit.trim(),
+    element.ingredient_name.trim(),
+    element.ingredient_unit.trim(),
   ]);
 };
 
 export const updateEL = (table, element, id) => {
   const fields = "(ingredient_name, ingredient_unit) = ($2, $3)";
-  return changeDB(
-    `UPDATE ${table} SET ${fields}
-     WHERE ingredient_id = $1;`,
-    [id, element.name.trim(), element.unit.trim()]
-  );
+  const pKey = "ingredient_id";
+  return changeDB(`UPDATE ${table} SET ${fields} WHERE ${pKey} = $1;`, [
+    id,
+    element.ingredient_name.trim(),
+    element.ingredient_unit.trim(),
+  ]);
 };
 
 export const deleteEL = (table, id) => {
-  deleteDB(
-    `DELETE FROM ${table} 
-    WHERE ingredient_id = $1;`,
-    [id]
-  );
+  const pKey = "ingredient_id";
+  return deleteDB(`DELETE FROM ${table} WHERE ${pKey} = $1;`, [id]);
 };

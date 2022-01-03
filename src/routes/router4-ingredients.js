@@ -6,11 +6,11 @@ import {
   updateEL,
   deleteEL,
 } from "../controllers/dbData-ingredients.js";
-import ErrorResponse from "../utils/ErrorResponse.js";
+// import ErrorResponse from "../utils/ErrorResponse.js";
 
 const dbTable = "ingredients";
-const fields = ["ingredient_id", "ingredient_name", "ingredient_unit"];
-const keyField = fields[0];
+const fields = ["ingredient_name", "ingredient_unit"];
+const keyField = fields[0]; //             *NOT* the auto-id field, but a unique identifier field
 
 const validateElement = (element) => {
   const tester = element;
@@ -22,7 +22,8 @@ const validateElement = (element) => {
         throw Error(`${e} undefined`);
       }
     });
-    // other validations
+    //                                   other validations go here (?)
+
     return element;
   } catch (e) {
     throw Error(`Data validation failed- ${e.message}.`);
@@ -48,7 +49,7 @@ ingredientsRouter
     }
   })
   .post(async (req, res) => {
-    //                                         create new tuple
+    //                                         creating new tuple
     try {
       await getOneEL(dbTable, req.body[keyField]);
       const info = {
@@ -65,10 +66,10 @@ ingredientsRouter
           message: `New data for ${req.body[keyField]} added.`,
         };
         res.json({ info, tuple });
-      } catch (error) {
+      } catch (error2) {
         const info = {
           result: false,
-          message: `Error creating ${req.body[keyField]} / ${error.message}.`,
+          message: `Error creating ${req.body[keyField]} / ${error2.message}.`,
         };
         res.json({ info });
       }
