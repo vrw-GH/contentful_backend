@@ -29,7 +29,7 @@ const endPoints = [route0, route1, route2, route3, route4];
 const app = express();
 const corsOptions = {
   // {origin: [host, "http://127.0.0.1", "https://abul.db.elephantsql.com/"],}
-  origin: ["*"],
+  origin: "*",
   optionsSuccessStatus: 200, // some legacy browsers
 };
 app.use(cors(corsOptions));
