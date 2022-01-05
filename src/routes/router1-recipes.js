@@ -16,6 +16,7 @@ const fields = [
   "ingredients",
   "recipe",
   "image",
+  "titleImg", // bytea
   "username",
 ];
 const keyField = fields[0];
