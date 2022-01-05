@@ -27,12 +27,12 @@ const endPoints = [route0, route1, route2, route3, route4];
 
 // ------------ MAIN APP -----------
 const app = express();
-app.use(
-  cors(
-    "*"
-    // {origin: [host, "http://127.0.0.1", "https://abul.db.elephantsql.com/"],}
-  )
-);
+const corsOptions = {
+  // {origin: [host, "http://127.0.0.1", "https://abul.db.elephantsql.com/"],}
+  origin: ["*"],
+  optionsSuccessStatus: 200, // some legacy browsers
+};
+app.use(cors(corsOptions));
 app.set("view engine", "ejs");
 app.use(express.static(join(__dirname, "uploads"))); //for serving something
 app.use(express.json());

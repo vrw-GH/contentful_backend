@@ -20,7 +20,7 @@ export const getOneEL = (table, id) => {
 
 export const createEL = (table, body) => {
   const fields =
-    "(title, category, ingredients, recipe, image, titleImg, username, slug)";
+    "(title, category, ingredients, recipe, image, title_img, username, slug)";
   const values = "($1, $2, $3, $4, $5, $6, $7, $8)";
   return changeDB(`INSERT INTO ${table}${fields} VALUES${values};`, [
     body.title,
@@ -28,7 +28,7 @@ export const createEL = (table, body) => {
     body.ingredients,
     body.recipe,
     body.image,
-    body.titleImg,
+    body.title_img,
     body.username,
     slug(body.title.trim().slice(0, 40)),
   ]);
@@ -36,7 +36,7 @@ export const createEL = (table, body) => {
 
 export const updateEL = (table, element, id) => {
   const fields =
-    "(title, category, ingredients, recipe, image, titleImg, username, slug)";
+    "(title, category, ingredients, recipe, image, title_img, username, slug)";
   const values = "($2, $3, $4, $5, $6, $7, $8, $9)";
   return changeDB(
     `UPDATE ${table} SET ${fields} = ${values} 
@@ -48,7 +48,7 @@ export const updateEL = (table, element, id) => {
       element.ingredients,
       element.recipe,
       element.image,
-      element.titleImg,
+      element.title_img,
       element.username,
       slug(element.title.trim().slice(0, 40)),
     ]
