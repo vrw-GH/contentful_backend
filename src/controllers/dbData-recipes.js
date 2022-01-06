@@ -6,7 +6,7 @@ import { queryDB, changeDB, deleteDB } from "../db/pg.js";
 // import conn from "../db/heroku.js";
 
 export const getAllEL = (table) => {
-  const fields = "title, category, image, username, slug"; // "*"
+  const fields = "title, category, image, title_img, username, slug"; // "*"
   return queryDB(`SELECT ${fields} FROM ${table};`);
 };
 
