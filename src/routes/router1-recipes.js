@@ -28,7 +28,7 @@ const validateElement = (element) => {
     fields.forEach((e) => {
       if (!tester[e]) {
         console.log(e, ":", tester[e]);
-        throw Error(`'${e}' undefined`);
+        throw Error(`<${e}> undefined`);
       }
     });
     // other validations
@@ -52,8 +52,11 @@ recipesRouter
       };
       res.json({ info, tuples });
     } catch (error) {
-      const info = { result: false, message: `No data found.` };
-      res.json({ info });
+      const info = {
+        result: false,
+        message: `No data found.`,
+      };
+      res.status(404).json({ info, systemError: error.message });
     }
   })
   .post(async (req, res) => {
@@ -62,10 +65,10 @@ recipesRouter
       await getOneEL(dbTable, req.body[keyField]);
       const info = {
         result: false,
-        message: `${req.body[keyField]} slug already exists.`,
+        message: `<${req.body[keyField]}> slug already exists.`,
       };
-      res.json({ info });
-    } catch (error) {
+      res.status(406).json({ info, systemError: null });
+    } catch (err) {
       try {
         const newElement = validateElement(req.body); // generates error if invalid
         // console.log("1");
@@ -73,15 +76,15 @@ recipesRouter
         // console.log("2");
         const info = {
           result: true,
-          message: `New data for ${req.body[keyField]} added.`,
+          message: `New data for <${req.body[keyField]}> added.`,
         };
         res.json({ info, tuple });
       } catch (error) {
         const info = {
           result: false,
-          message: `Error creating ${req.body[keyField]} / ${error.message}.`,
+          message: `Error creating <${req.body[keyField]}>.`,
         };
-        res.json({ info });
+        res.status(406).json({ info, systemError: error.message });
       }
     }
   })
@@ -90,7 +93,7 @@ recipesRouter
       result: false,
       message: `Delete all data not allowed.`,
     };
-    res.json({ info });
+    res.status(403).json({ info, systemError: "" });
   });
 
 recipesRouter
@@ -102,15 +105,15 @@ recipesRouter
       const tuple = await getOneEL(dbTable, idKey);
       const info = {
         result: true,
-        message: `${dbTable} info for ${req.params.id}.`,
+        message: `${dbTable} info for <${req.params.id}>.`,
       };
       res.json({ info, tuple });
     } catch (error) {
       const info = {
         result: false,
-        message: `${dbTable} ${req.params.id} (no slug found).`,
+        message: `${dbTable} <${req.params.id}> (no slug found).`,
       };
-      res.json({ info });
+      res.status(404).json({ info, systemError: error.message });
     }
   })
   .post(async (req, res) => {
@@ -119,21 +122,21 @@ recipesRouter
     try {
       let tuple = await getOneEL(dbTable, idKey);
       if (!tuple)
-        throw Error(`${dbTable} ${req.params.id} (couldnt find data).`);
+        throw Error(`${dbTable} <${req.params.id}> (couldnt find data).`);
       const newElement = validateElement(req.body); // generates error if invalid
       tuple = await updateEL(dbTable, newElement, idKey);
       if (!tuple) throw Error(`Update failed.`);
       const info = {
         result: true,
-        message: `${dbTable} info for ${req.params.id} updated.`,
+        message: `${dbTable} info for <${req.params.id}> updated.`,
       };
       res.json({ info, tuple });
     } catch (error) {
       const info = {
         result: false,
-        message: `${dbTable} ${req.params.id} (${error}).`,
+        message: `${dbTable} <${req.params.id}>.`,
       };
-      res.json({ info });
+      res.status(404).json({ info, systemError: error.message });
     }
   })
   .delete(async (req, res) => {
@@ -145,15 +148,15 @@ recipesRouter
       await deleteEL(dbTable, idKey);
       const info = {
         result: true,
-        message: `${dbTable} ${req.params.id} DELETED.`,
+        message: `${dbTable} <${req.params.id}> DELETED.`,
       };
       res.json({ info });
     } catch (error) {
       const info = {
         result: false,
-        message: `${dbTable} ${req.params.id} (slug does not exist/${error.message}).`,
+        message: `${dbTable} <${req.params.id}> (slug does not exist).`,
       };
-      res.json({ info });
+      res.status(404).json({ info, systemError: error.message });
     }
   });
 
