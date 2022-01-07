@@ -5,36 +5,63 @@ import {
   createEL,
   updateEL,
   deleteEL,
-} from "../controllers/dbData-ingredients.js";
-// import ErrorResponse from "../utils/ErrorResponse.js";
+} from "../controllers/dbData-shareitems.js";
+import ErrorResponse from "../utils/ErrorResponse.js";
 
-const dbTable = "ingredients";
-const fields = ["ingredient_name", "ingredient_unit"];
-const keyField = fields[0]; //    *NOT* the auto-id field, but an identifier field
+const dbTable = "shareitems";
+const fields = [
+  //field,creating,updatable
+  ["username", true, false], //char(16)
+  ["sharestatus", true, true], //char(1)
+  ["arrayofitems", false, true], //text[]
+  ["location", false, true], //point(x,y)
+  ["message", false, true], //text
+];
+const keyField = fields[0][0];
 
-const validateElement = (element) => {
+const validateElement = (element, toUpdate) => {
   const tester = element;
   try {
     // console.log(JSON.stringify(tester)); // if not json.
     fields.forEach((e) => {
-      if (!tester[e]) {
-        console.log(e, ":", tester[e]);
-        throw Error(`<${e}> undefined`);
+      const field = e[0];
+      const creation = e[1];
+      const updatable = e[2];
+      if (toUpdate) {
+        // when updating
+        if (tester[field] !== undefined) {
+          if (!updatable) {
+            const msg = `Update <${field}> disallowed.`;
+            console.log(msg);
+            throw Error(msg);
+          }
+          if (creation && !tester[field]) {
+            const msg = `<${field}> has error: (${tester[field]})`;
+            console.log(msg);
+            throw Error(msg);
+          }
+        }
+      } else {
+        // when creating
+        if (creation && !tester[field]) {
+          const msg = `<${field}> has error: (${tester[field]})`;
+          console.log(msg);
+          throw Error(msg);
+        }
       }
     });
-    //                                   other validations go here (?)
-
+    // any other validations
     return element;
   } catch (e) {
     throw Error(`Data validation failed- ${e.message}.`);
   }
 };
 
-const ingredientsRouter = Router();
-ingredientsRouter
+const usersRouter = Router();
+usersRouter
   .route("/")
   .get(async (req, res) => {
-    //                                         get all tuples
+    //                                       get all tuples
     try {
       const tuples = await getAllEL(dbTable);
       const info = {
@@ -49,7 +76,7 @@ ingredientsRouter
     }
   })
   .post(async (req, res) => {
-    //                                         creating new tuple
+    //                                         create new tuple
     try {
       await getOneEL(dbTable, req.body[keyField]);
       const info = {
@@ -59,7 +86,7 @@ ingredientsRouter
       res.status(406).json({ info, systemError: null });
     } catch (err) {
       try {
-        const newElement = validateElement(req.body); // generates error if invalid
+        const newElement = validateElement(req.body, false); // generates error if invalid
         const tuple = await createEL(dbTable, newElement);
         const info = {
           result: true,
@@ -83,7 +110,7 @@ ingredientsRouter
     res.status(403).json({ info, systemError: "" });
   });
 
-ingredientsRouter
+usersRouter
   .route("/:id")
   .get(async (req, res) => {
     //                                         get single tuple
@@ -108,7 +135,7 @@ ingredientsRouter
       let tuple = await getOneEL(dbTable, req.params.id);
       if (!tuple)
         throw Error(`${dbTable} <${req.params.id}> (couldnt find data).`);
-      const newElement = validateElement(req.body); // generates error if invalid
+      const newElement = validateElement(req.body, true); // generates error if invalid
       tuple = await updateEL(dbTable, newElement, req.params.id);
       if (!tuple) throw Error(`Update failed.`);
       const info = {
@@ -119,7 +146,7 @@ ingredientsRouter
     } catch (error) {
       const info = {
         result: false,
-        message: `${dbTable} <${req.params.id}> not existing.`,
+        message: `${dbTable} <${req.params.id}> error.`,
       };
       res.status(404).json({ info, systemError: error.message });
     }
@@ -144,4 +171,4 @@ ingredientsRouter
     }
   });
 
-export default ingredientsRouter;
+export default usersRouter;

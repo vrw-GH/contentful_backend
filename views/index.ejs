@@ -15,10 +15,10 @@
    <h2>This is the Root.</h2>
    <h3><i> - All general API routes are as follows: </i></h3>
    <ul>
-      <% endPoints.forEach((ep)=>{ %>
+      <% Object.keys(endPoints).forEach((ep)=>{ %>
          <li>
-            <a href=<%= `${ep[0]}` %>>
-               <%- `Route: ${ep[1]}  -  ${ep[0]}` %>
+            <a href=<%= `${endPoints[ep][0]}` %>>
+               <%- `Route: ${endPoints[ep][0]}  -  ${endPoints[ep][1]}` %>
             </a>
          </li>
       <% }); %>
@@ -28,8 +28,8 @@
    {
       "info": {
          "result":true,                         // or false -- for error condition
-         "message":"All users list.",           // will contain any error info
-         "records":9                            // not for /:id responses
+         "message":"All users list.",           // will show specific info
+         "records":9   (or System error info)   // additional info
       },
       "tuples": [                               // if any tuples returned
          {"field":"data","field2":"data2"   etc... },
