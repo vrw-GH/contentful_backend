@@ -10,23 +10,54 @@ import ErrorResponse from "../utils/ErrorResponse.js";
 
 const dbTable = "users";
 const fields = [
-  "username",
-  "email",
-  "password",
-  "profilepic", //text
-  "plz", //char(10)
-  "location", //point(x,y)
+  //field,creating,updatable
+  ["username", true, false],
+  ["email", true, true],
+  ["password", true, true],
+  ["profilepic", false, true], //text
+  ["plz", false, true], //char(10)
+  ["location", false, true], //point(x,y)
 ];
-const keyField = fields[0];
+const keyField = fields[0][0];
 
-const validateElement = (element) => {
+const validateElement = (element, toUpdate) => {
   const tester = element;
   try {
     // console.log(JSON.stringify(tester)); // if not json.
     fields.forEach((e) => {
-      if (!tester[e]) {
-        console.log(e, ":", tester[e]);
-        throw Error(`<${e}> undefined`);
+      const field = e[0];
+      const creation = e[1];
+      const updatable = e[2];
+      // console.log(
+      //   "validation for",
+      //   toUpdate ? "Updating" : "Creating",
+      //   ": <",
+      //   field,
+      //   creation ? "> needed" : "> notneeded",
+      //   updatable ? "canupdate" : "cannotupdate"
+      // );
+      // console.log(field, ":", tester[field]);
+      if (toUpdate) {
+        // when updating
+        if (tester[field] !== undefined) {
+          if (!updatable) {
+            const msg = `Update <${field}> disallowed.`;
+            console.log(msg);
+            throw Error(msg);
+          }
+          if (creation && !tester[field]) {
+            const msg = `<${field}> has error: (${tester[field]})`;
+            console.log(msg);
+            throw Error(msg);
+          }
+        }
+      } else {
+        // when creating
+        if (creation && !tester[field]) {
+          const msg = `<${field}> has error: (${tester[field]})`;
+          console.log(msg);
+          throw Error(msg);
+        }
       }
     });
     // other validations
@@ -65,7 +96,7 @@ usersRouter
       res.status(406).json({ info, systemError: null });
     } catch (err) {
       try {
-        const newElement = validateElement(req.body); // generates error if invalid
+        const newElement = validateElement(req.body, false); // generates error if invalid
         const tuple = await createEL(dbTable, newElement);
         const info = {
           result: true,
@@ -114,7 +145,7 @@ usersRouter
       let tuple = await getOneEL(dbTable, req.params.id);
       if (!tuple)
         throw Error(`${dbTable} <${req.params.id}> (couldnt find data).`);
-      const newElement = validateElement(req.body); // generates error if invalid
+      const newElement = validateElement(req.body, true); // generates error if invalid
       tuple = await updateEL(dbTable, newElement, req.params.id);
       if (!tuple) throw Error(`Update failed.`);
       const info = {
@@ -125,7 +156,7 @@ usersRouter
     } catch (error) {
       const info = {
         result: false,
-        message: `${dbTable} <${req.params.id}> not existing.`,
+        message: `${dbTable} <${req.params.id}> error.`,
       };
       res.status(404).json({ info, systemError: error.message });
     }
