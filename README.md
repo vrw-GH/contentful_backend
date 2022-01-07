@@ -1,6 +1,6 @@
 # API for contentful project
 
-Deployed on HEROKU https://avc-food-blog.herokuapp.com/
+Continuous Deployment on HEROKU https://avc-food-blog.herokuapp.com/
 
 Project Team:
 Victor, Abdullah, Carina
