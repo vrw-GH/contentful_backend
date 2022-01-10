@@ -19,6 +19,7 @@ import usersRouter from "./src/routes/router2-users.js";
 import categoriesRouter from "./src/routes/router3-categories.js";
 import ingredientsRouter from "./src/routes/router4-ingredients.js";
 import shareitemsRouter from "./src/routes/router5-shareitems.js";
+import plzRouter from "./src/routes/router6-plz.js";
 
 const route0 = ["/", "Info Page"];
 const endPoints = {
@@ -28,6 +29,7 @@ const endPoints = {
   route3: ["/api/categories", "API Categories", categoriesRouter],
   route4: ["/api/ingredients", "API Ingredients", ingredientsRouter],
   route5: ["/api/shareitems", "API Shareitems", shareitemsRouter],
+  route6: ["/api/plz-de", "API PostalCodes DE", plzRouter],
 };
 // ------------ MAIN APP -----------
 const app = express();
