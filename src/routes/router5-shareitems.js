@@ -16,6 +16,7 @@ const fields = [
   ["arrayofitems", false, true], //text[]
   ["location", false, true], //point(x,y)
   ["message", false, true], //text
+  ["plz", true, true], //text
 ];
 const keyField = fields[0][0];
 
