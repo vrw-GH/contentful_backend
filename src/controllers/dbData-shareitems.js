@@ -5,40 +5,52 @@ import { queryDB, changeDB, deleteDB } from "../db/pg.js";
 // import conn from "../db/heroku.js";
 
 // ------ fields list  ---------
+// ["id", false, false], //int(auto)
 // ["username", true, false], //char(16)
 // ["sharestatus", true, true], //char(1)
 // ["arrayofitems", false, true], //text[]
 // ["location", false, true], //point(x,y)
 // ["message", false, true], //text
+// ["plz", true, true], //text(20)
 
 export const getAllEL = (table) => {
   const fields = "*";
   return queryDB(`SELECT ${fields} FROM ${table};`);
 };
 
-export const getOneEL = (table, id) => {
-  const fields = "*";
-  return queryDB(
-    `SELECT ${fields} FROM ${table} 
-    WHERE LOWER(username) = LOWER($1);`,
-    [id]
-  );
-};
-
 export const createEL = (table, element) => {
-  console.log(element);
+  // console.log(element);
   const fields =
-    "(username,sharestatus,arrayofitems,location,message)  VALUES($1, $2, $3, $4, $5)";
+    "(username,sharestatus,arrayofitems,location,message,plz)  VALUES($1, $2, $3, $4, $5, $6)";
   return changeDB(`INSERT INTO ${table} ${fields} ;`, [
     element.username,
     element.sharestatus,
     element.arrayofitems,
     element.location,
     element.message,
+    element.plz,
   ]);
 };
 
-export const updateEL = (table, element, id) => {
+export const getManyEL = (table, key, keyField) => {
+  const fields = "*";
+  return queryDB(
+    `SELECT ${fields} FROM ${table} 
+    WHERE LOWER(${keyField}) = LOWER($1);`,
+    [key]
+  );
+};
+
+export const getOneEL = (table, id, idField) => {
+  const fields = "*";
+  return queryDB(
+    `SELECT ${fields} FROM ${table} 
+    WHERE ${idField} = $1;`,
+    [id]
+  );
+};
+
+export const updateEL = (table, element, id, idField) => {
   // likes as {json}
   // profilepic as jpg/base64,
   // plz as char(10)
@@ -57,15 +69,15 @@ export const updateEL = (table, element, id) => {
   if (f1.length > 1) values = "(" + values + ")";
   return changeDB(
     `UPDATE ${table} SET ${fields} = ${values}
-     WHERE LOWER(username) = LOWER($1);`,
+     WHERE ${idField} = $1;`,
     dataArray
   );
 };
 
-export const deleteEL = (table, id) => {
-  deleteDB(
+export const deleteEL = (table, id, idField) => {
+  return deleteDB(
     `DELETE FROM ${table} 
-    WHERE LOWER(username) = LOWER($1);`,
+    WHERE ${idField} = $1;`,
     [id]
   );
 };

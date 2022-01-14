@@ -1,62 +1,28 @@
 import { Router } from "express";
 import {
   getAllEL,
-  getOneEL,
   createEL,
+  getOneEL,
+  getManyEL,
   updateEL,
   deleteEL,
 } from "../controllers/dbData-shareitems.js";
+import { validateElement } from "../utils/CommonFunctions.js";
 import ErrorResponse from "../utils/ErrorResponse.js";
 
 const dbTable = "shareitems";
 const fields = [
   //field,creating,updatable
+  ["id", false, false], //int(auto)
   ["username", true, false], //char(16)
   ["sharestatus", true, true], //char(1)
-  ["arrayofitems", false, true], //text[]
-  ["location", false, true], //point(x,y)
-  ["message", false, true], //text
-  ["plz", true, true], //text
+  ["arrayofitems", true, true], //text[]
+  ["location", true, true], //point(x,y)
+  ["message", true, true], //text
+  ["plz", true, true], //text(20)
 ];
-const keyField = fields[0][0];
-
-const validateElement = (element, toUpdate) => {
-  const tester = element;
-  try {
-    // console.log(JSON.stringify(tester)); // if not json.
-    fields.forEach((e) => {
-      const field = e[0];
-      const creation = e[1];
-      const updatable = e[2];
-      if (toUpdate) {
-        // when updating
-        if (tester[field] !== undefined) {
-          if (!updatable) {
-            const msg = `Update <${field}> disallowed.`;
-            console.log(msg);
-            throw Error(msg);
-          }
-          if (creation && !tester[field]) {
-            const msg = `<${field}> has error: (${tester[field]})`;
-            console.log(msg);
-            throw Error(msg);
-          }
-        }
-      } else {
-        // when creating
-        if (creation && !tester[field]) {
-          const msg = `<${field}> has error: (${tester[field]})`;
-          console.log(msg);
-          throw Error(msg);
-        }
-      }
-    });
-    // any other validations
-    return element;
-  } catch (e) {
-    throw Error(`Data validation failed- ${e.message}.`);
-  }
-};
+const idField = fields[0][0];
+const keyField = fields[1][0];
 
 const usersRouter = Router();
 usersRouter
@@ -78,30 +44,30 @@ usersRouter
   })
   .post(async (req, res) => {
     //                                         create new tuple
+    // try {
+    //   await getOneEL(dbTable, req.body[keyField]);
+    //   const info = {
+    //     result: false,
+    //     message: `${keyField} <${req.body[keyField]}> already exists.`,
+    //   };
+    //   res.status(406).json({ info, systemError: null });
+    // } catch (err) {
     try {
-      await getOneEL(dbTable, req.body[keyField]);
+      const newElement = validateElement(req.body, fields, false); // generates error if invalid
+      const tuple = await createEL(dbTable, newElement);
+      const info = {
+        result: true,
+        message: `New data for <${req.body[keyField]}> added.`,
+      };
+      res.json({ info, tuple });
+    } catch (error) {
       const info = {
         result: false,
-        message: `${keyField} <${req.body[keyField]}> already exists.`,
+        message: `Error creating <${req.body[keyField]}>.`,
       };
-      res.status(406).json({ info, systemError: null });
-    } catch (err) {
-      try {
-        const newElement = validateElement(req.body, false); // generates error if invalid
-        const tuple = await createEL(dbTable, newElement);
-        const info = {
-          result: true,
-          message: `New data for <${req.body[keyField]}> added.`,
-        };
-        res.json({ info, tuple });
-      } catch (error) {
-        const info = {
-          result: false,
-          message: `Error creating <${req.body[keyField]}>.`,
-        };
-        res.status(406).json({ info, systemError: error.message });
-      }
+      res.status(406).json({ info, systemError: error.message });
     }
+    // }
   })
   .delete((req, res) => {
     const info = {
@@ -112,14 +78,42 @@ usersRouter
   });
 
 usersRouter
-  .route("/:id")
+  .route("/:username")
   .get(async (req, res) => {
-    //                                         get single tuple
+    //                                    get tuples for single username
     try {
-      const tuple = await getOneEL(dbTable, req.params.id);
+      const tuples = await getManyEL(dbTable, req.params.username, keyField);
       const info = {
         result: true,
-        message: `${dbTable} info for <${req.params.id}>.`,
+        message: `${dbTable} info for <${req.params.username}>.`,
+      };
+      res.json({ info, tuples });
+    } catch (error) {
+      const info = {
+        result: false,
+        message: `${dbTable} <${req.params.username}> does not exist.`,
+      };
+      res.status(404).json({ info, systemError: error.message });
+    }
+  })
+  .delete((req, res) => {
+    const info = {
+      result: false,
+      message: `Delete all <${req.params.username}> not allowed.`,
+    };
+    res.status(403).json({ info, systemError: "" });
+  });
+
+usersRouter
+  .route("/:username/:id")
+  .get(async (req, res) => {
+    //                                         get tuple for single id
+    console.log(req.params.id);
+    try {
+      const tuple = await getOneEL(dbTable, req.params.id, idField);
+      const info = {
+        result: true,
+        message: `${dbTable} info for <${req.params.username}(${req.params.id})>.`,
       };
       res.json({ info, tuple });
     } catch (error) {
@@ -133,11 +127,11 @@ usersRouter
   .post(async (req, res) => {
     //                                         update single tuple
     try {
-      let tuple = await getOneEL(dbTable, req.params.id);
+      let tuple = await getOneEL(dbTable, req.params.id, idField);
       if (!tuple)
         throw Error(`${dbTable} <${req.params.id}> (couldnt find data).`);
-      const newElement = validateElement(req.body, true); // generates error if invalid
-      tuple = await updateEL(dbTable, newElement, req.params.id);
+      const newElement = validateElement(req.body, fields, true); // generates error if invalid
+      tuple = await updateEL(dbTable, newElement, req.params.id, idField);
       if (!tuple) throw Error(`Update failed.`);
       const info = {
         result: true,
@@ -155,18 +149,18 @@ usersRouter
   .delete(async (req, res) => {
     //  Confirm...                     make sure!! - implement at front-end ?
     try {
-      const tuple = await getOneEL(dbTable, req.params.id);
+      let tuple = await getOneEL(dbTable, req.params.id, idField);
       if (!tuple) throw Error(`Error in delete operation.`);
-      await deleteEL(dbTable, req.params.id);
+      tuple = await deleteEL(dbTable, req.params.id, idField);
       const info = {
         result: true,
-        message: `${dbTable} <${req.params.id}> DELETED.`,
+        message: `${dbTable} <${req.params.username}(${req.params.id})> DELETED.`,
       };
       res.json({ info });
     } catch (error) {
       const info = {
         result: false,
-        message: `${dbTable} <${req.params.id}> does not exist.`,
+        message: `${dbTable} <${req.params.username}(${req.params.id})> does not exist.`,
       };
       res.status(404).json({ info, systemError: error.message });
     }
